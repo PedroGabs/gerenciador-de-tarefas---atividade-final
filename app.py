@@ -54,3 +54,59 @@ def criarAtividade():
             
         DataCreation = Now
         addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation)
+        os.system('cls')
+
+###############################################   Menu   ######################################################
+
+
+while True:
+    print('                                                              ')
+    print(r'  ████████╗ █████╗ ███████╗██╗  ██╗██╗  ██╗██╗   ██╗██████╗   ')
+    print(r'  ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝██║  ██║██║   ██║██╔══██╗  ')
+    print(r'     ██║   ███████║███████╗█████╔╝ ███████║██║   ██║██████╔╝  ')
+    print(r'     ██║   ██╔══██║╚════██║██╔═██╗ ██╔══██║██║   ██║██╔══██╗  ')
+    print(r'     ██║   ██║  ██║███████║██║  ██╗██║  ██║╚██████╔╝██████╔╝  ')
+    print(r'     ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝   ')
+    print('                                                              ')
+    print('  ╔════════════════════════════════════════════════════════╗  ')
+    print('  ║                                                        ║  ')
+    print('  ║                > 1 - Criar tarefa                      ║  ')
+    print('  ║                > 2 - Ver lista de tarefas              ║  ')
+    print('  ║                > 3 - Sei la, teste                     ║  ')
+    print('  ║                > 4 - Sair                              ║  ')
+    print('  ║                                                        ║  ')
+    print('  ╚════════════════════════════════════════════════════════╝  ')
+
+#Validação básica para o usuário interagir com o menu apenas utilizando números inteiros
+
+    try:
+        opcao = int(input(': '))
+    except ValueError:
+        print('\nUtilize apenas números!!\n') 
+        time.sleep(1.7)
+        os.system('cls')
+        continue
+
+    match opcao:
+        case 1:
+            criarAtividade()
+
+        case 2:
+            print(ToDo)
+            input("")
+            os.system('cls')
+
+        case 3:
+            print('fndfs')
+
+        case 4:
+            break
+
+        case _:
+            print('\nOpção inválida. Tente novamente!\n')
+            time.sleep(1.7)
+            os.system('cls')
+
+# caracteres do menu!
+# 
+# ╔╗═╚╝╠╣╦╬║╩
