@@ -13,7 +13,7 @@ ToDo = []
 
 #essa lista é pra validar as opções das variáveis, pq o usuário pode digitar em caixa alta, precisa melhorar um pouco pra evitar erros.
 
-prioridades_validas = ["urgente", "alta", "média", "baixa"]
+prioridades_validas = {"urgente": 1, "alta": 2, "média": 3, "baixa":4}
 status_validos = ["pendente", "fazendo", "concluído"]
 origens_validas = ["email", "telefone", "chamado do sistema"]
 
@@ -65,15 +65,95 @@ def MostrarTasks(): #função pra imprimir as informações da lista na tela do 
         for i in range(21):
                 bar = '█' * i + '░' * (20 - i)
                 print(f'\rCarregando: |{bar}| {i*5}%', end='') #apenas estética, pra criar efeito de carregamento.
-                time.sleep(0.1)
+                time.sleep(0.03)
                 os.system('cls')
-        for Tasks in ToDo:
+        tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]])
+        for Tasks in tarefas_ordenadas:
             print(f"\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}")
         input("")
         os.system('cls')
 
-#def AtualizarStatus():
-#    print('Qual tarefa você deseja atualizar o status?')
+def AtualizarStatus(): #função para editar alguma tarefa
+    if not ToDo:
+        print('\033[31m \nNão há nenhuma tarefa registrada para atualizar! \033[0m')
+        time.sleep(2.1)
+        os.system('cls')
+        return
+    else:
+        for i in range(21):
+                bar = '█' * i + '░' * (20 - i)
+                print(f'\rCarregando: |{bar}| {i*5}%', end='') #apenas estética, pra criar efeito de carregamento.
+                time.sleep(0.03)
+                os.system('cls')
+
+        #1° parte da função
+
+        print('Qual tarefa você deseja atualizar?')
+        tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
+        for i, Tasks in enumerate(tarefas_ordenadas):
+            print(f'\nId: {i + 1}\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}') #Atribui uma adição de 1 ao ID para começar de 1 adiante.
+            
+            #adicionei ao For o enumerate pra ele atribuir um ID numérico as tarefas (provisóriamente, a ideia é ele ja ser declarado na criação sem precisar diretamente da interação do usuário igual o status que por padrão vem como pendente).
+        try:
+            indice = int(input(': ')) - 1   #Validação do índice + a subtração de 1 para se igualar ao ID da tarefa.
+            Tasks = ToDo[indice]
+            os.system('cls')
+        except (ValueError, IndexError):
+            print('\033[31m \nÍndice desconhecido, tente novamente! \033[0m')
+            time.sleep(1.7)
+            os.system('cls')
+            return
+        
+        #2° parte da função
+
+        print('O que você deseja alterar?') #Menu de alterações
+        print('> 1 - Prioridade')
+        print('> 2 - Status')
+        try:
+            option = int(input(': ')) #parte pra validar o valor da opção
+            os.system('cls')
+        except ValueError:
+            print('\033[31m Utilize apenas números!!\033[0m\n') 
+            time.sleep(2.1)
+            os.system('cls')
+            return
+
+        match option:
+            case 1: #se o usuário optar pela primeira opção, ele passará pela etapa de cadastro na respectiva parte da tarefa.   
+                nova_prioridade = input('Informe a prioridade da tarefa (baixa, média, alta ou Urgente): ').lower()
+                if nova_prioridade in prioridades_validas:
+                    Tasks['prioridade'] = nova_prioridade
+                    print('\033[32m Prioridade alterada com sucesso! \033[0m')
+                    time.sleep(1.7)
+                    os.system('cls')
+
+                else:
+                    print('\033[31m Prioridade inválida. Tente novamente! \033[0m ')
+                    time.sleep(2.1)
+                    os.system('cls')
+                    return #Precisa coisar pra ele voltar pra informar de novo a prioridade
+
+            case 2:
+                novo_status = input('Informe o status da tarefa (pendente, fazendo ou concluído): ').lower()
+                if novo_status in status_validos:
+                    Tasks['status'] = novo_status
+                    print('\033[32m Status alterado com sucesso! \033[0m')
+                    time.sleep(1.7)
+                    os.system('cls')
+
+                else:
+                    print('\033[31m Status inválido. Tente novamente! \033[0m ')
+                    time.sleep(2.1)
+                    os.system('cls')
+                    return #Precisa coisar pra ele voltar pra informar de novo a prioridade
+
+
+            case _:
+                print('\033[31m Opção inválida. Tente novamente! \033[0m \n')
+                time.sleep(2.1)
+                os.system('cls')
+        
+            
 
 
 ###############################################   Menu   ######################################################
@@ -82,21 +162,21 @@ def MostrarTasks(): #função pra imprimir as informações da lista na tela do 
 
 while True:
     print('                                                              ')
-    print(r'  ████████╗ █████╗ ███████╗██╗  ██╗██╗  ██╗██╗   ██╗██████╗   ')
-    print(r'  ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝██║  ██║██║   ██║██╔══██╗  ')
-    print(r'     ██║   ███████║███████╗█████╔╝ ███████║██║   ██║██████╔╝  ')
-    print(r'     ██║   ██╔══██║╚════██║██╔═██╗ ██╔══██║██║   ██║██╔══██╗  ')
-    print(r'     ██║   ██║  ██║███████║██║  ██╗██║  ██║╚██████╔╝██████╔╝  ')
-    print(r'     ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝   ')
-    print('                                                              ')
-    print('  ╔════════════════════════════════════════════════════════╗  ')
-    print('  ║                                                        ║  ')
-    print('  ║\033[35m                > 1 - Criar tarefa                   \033[0m   ║  ')
-    print('  ║\033[35m                > 2 - Ver lista de tarefas           \033[0m   ║  ')
-    print('  ║\033[35m                > 3 - Atualizar status de tarefas    \033[0m   ║  ')
-    print('  ║\033[35m                > 4 - Sair                           \033[0m   ║  ')
-    print('  ║                                                        ║  ')
-    print('  ╚════════════════════════════════════════════════════════╝  ')
+    print(r'  ████████╗ █████╗ ███████╗██╗  ██╗       ██╗  ██╗██╗   ██╗██████╗   ')
+    print(r'  ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝       ██║  ██║██║   ██║██╔══██╗  ')
+    print(r'     ██║   ███████║███████╗█████╔╝        ███████║██║   ██║██████╔╝  ')
+    print(r'     ██║   ██╔══██║╚════██║██╔═██╗        ██╔══██║██║   ██║██╔══██╗  ')
+    print(r'     ██║   ██║  ██║███████║██║  ██╗       ██║  ██║╚██████╔╝██████╔╝  ')
+    print(r'     ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝       ╚═╝  ╚═╝ ╚═════╝ ╚═════╝   ')
+    print('                                                                      ')
+    print('  ╔════════════════════════════════════════════════════════════════╗  ')
+    print('  ║                                                                ║  ')
+    print('  ║\033[35m                > 1 - Criar tarefa                   \033[0m           ║  ')
+    print('  ║\033[35m                > 2 - Ver lista de tarefas           \033[0m           ║  ')
+    print('  ║\033[35m                > 3 - Atualizar tarefas              \033[0m           ║  ')
+    print('  ║\033[35m                > 4 - Sair                           \033[0m           ║  ')
+    print('  ║                                                                ║  ')
+    print('  ╚════════════════════════════════════════════════════════════════╝  ')
 
 #Validação básica para o usuário interagir com o menu apenas utilizando números inteiros
 
