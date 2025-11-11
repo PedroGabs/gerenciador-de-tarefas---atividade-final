@@ -26,7 +26,7 @@ def addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation):
 def criarAtividade():
     titulo = str(input('Digite o título da tarefa: '))
     if len(titulo) >= 50:
-        print('Título muito grande! (limite de 50 caracteres)\n')
+        print('\033[31m Título muito grande! (limite de 50 caracteres) \033[0m \n')
         time.sleep(2.1)
         os.system('cls')
         return criarAtividade()
@@ -37,7 +37,7 @@ def criarAtividade():
             if prioridade in prioridades_validas:
                 break
             else:
-                print('Prioridade inválida. Tente novamente!')
+                print('\033[31m Prioridade inválida. Tente novamente! \033[0m ')
                 time.sleep(2.1)
                 os.system('cls')
                 return #Precisa coisar pra ele voltar pra informar de novo a prioridade 
@@ -47,7 +47,7 @@ def criarAtividade():
             if origemTar in origens_validas:
                 break
             else:
-                print('Origem desconhecida. Tente novamente!')
+                print('\033[31m Origem desconhecida. Tente novamente! \033[0m')
                 time.sleep(2.1)
                 os.system('cls')
                 return #Mesma fita que a prioridade
@@ -55,9 +55,30 @@ def criarAtividade():
         DataCreation = Now
         addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation)
         os.system('cls')
+    
+def MostrarTasks(): #função pra imprimir as informações da lista na tela do usuário
+    if not ToDo: #Validação simples pra ver se tem algo ou não na lista
+        print('\033[31m \nNão há nenhuma tarefa registrada no momento! \033[0m ')
+        time.sleep(2.1)
+        os.system('cls')
+    else:
+        for i in range(21):
+                bar = '█' * i + '░' * (20 - i)
+                print(f'\rCarregando: |{bar}| {i*5}%', end='') #apenas estética, pra criar efeito de carregamento.
+                time.sleep(0.1)
+                os.system('cls')
+        for Tasks in ToDo:
+            print(f"\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}")
+        input("")
+        os.system('cls')
+
+#def AtualizarStatus():
+#    print('Qual tarefa você deseja atualizar o status?')
+
 
 ###############################################   Menu   ######################################################
 
+#\033[35m \033[0m
 
 while True:
     print('                                                              ')
@@ -70,10 +91,10 @@ while True:
     print('                                                              ')
     print('  ╔════════════════════════════════════════════════════════╗  ')
     print('  ║                                                        ║  ')
-    print('  ║                > 1 - Criar tarefa                      ║  ')
-    print('  ║                > 2 - Ver lista de tarefas              ║  ')
-    print('  ║                > 3 - Sei la, teste                     ║  ')
-    print('  ║                > 4 - Sair                              ║  ')
+    print('  ║\033[35m                > 1 - Criar tarefa                   \033[0m   ║  ')
+    print('  ║\033[35m                > 2 - Ver lista de tarefas           \033[0m   ║  ')
+    print('  ║\033[35m                > 3 - Atualizar status de tarefas    \033[0m   ║  ')
+    print('  ║\033[35m                > 4 - Sair                           \033[0m   ║  ')
     print('  ║                                                        ║  ')
     print('  ╚════════════════════════════════════════════════════════╝  ')
 
@@ -82,7 +103,7 @@ while True:
     try:
         opcao = int(input(': '))
     except ValueError:
-        print('\nUtilize apenas números!!\n') 
+        print('\033[31m Utilize apenas números!!\033[0m\n') 
         time.sleep(1.7)
         os.system('cls')
         continue
@@ -92,21 +113,19 @@ while True:
             criarAtividade()
 
         case 2:
-            print(ToDo)
-            input("")
-            os.system('cls')
+            MostrarTasks()
 
         case 3:
-            print('fndfs')
+            AtualizarStatus()
 
         case 4:
             break
 
         case _:
-            print('\nOpção inválida. Tente novamente!\n')
+            print('\033[31m Opção inválida. Tente novamente! \033[0m \n')
             time.sleep(1.7)
             os.system('cls')
 
 # caracteres do menu!
-# 
+#  \033[31m \033[0m
 # ╔╗═╚╝╠╣╦╬║╩
