@@ -1,26 +1,33 @@
 import os
 import time
+import json
 from datetime import datetime
 
-#é pra chamar a função que pega o horário do pc
-agora = datetime.now()
-
-#Formatar para o padrão brasileiro completo (HH:MM:SS DD/MM/AAAA)
-Now = agora.strftime("%H:%M:%S %d/%m/%Y")
+#id global
+id_tarefa = 1
 
 #lista principal
 ToDo = []
 
+#lista excluidos
+Tasks_del = []
+
+#lista concluídas
+Tasks_con = []
+
+
 #essa lista é pra validar as opções das variáveis, pq o usuário pode digitar em caixa alta, precisa melhorar um pouco pra evitar erros.
 
 prioridades_validas = {"urgente": 1, "alta": 2, "média": 3, "baixa":4}
-status_validos = ["pendente", "fazendo", "concluído"]
+status_validos = ["pendente", "fazendo", "concluído", "excluída"]
 origens_validas = ["email", "telefone", "chamado do sistema"]
 
 #função pra adicionar a tarefa, pra mim eu acho melhor ter pra ficar mais simples e fácil... continuação abaixo
 def addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation):
-    task = {"titulo" : titulo, "desc" : desc, "prioridade" : prioridade, "status" : status, "origemTar" : origemTar, "DataCreation" : DataCreation}
+    global id_tarefa
+    task = {"ID" : id_tarefa,"titulo" : titulo, "desc" : desc, "prioridade" : prioridade, "status" : status, "origemTar" : origemTar, "DataCreation" : DataCreation}
     ToDo.append(task)
+    id_tarefa += 1
 
 #é bem mais prático fazer a função de criar a tarefa e dps no finalzinho só chamar a função de add a tarefa na lista, fica mais simples e menos poluído visualmente dizendo(minha visão, podem concordar ou discordar)
 def criarAtividade():
@@ -52,7 +59,7 @@ def criarAtividade():
                 os.system('cls')
                 return #Mesma fita que a prioridade
             
-        DataCreation = Now
+        DataCreation = datetime.now().strftime("%H:%M:%S %d/%m/%Y") #para pegar o horario
         addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation)
         os.system('cls')
     
@@ -69,8 +76,8 @@ def MostrarTasks(): #função pra imprimir as informações da lista na tela do 
                 os.system('cls')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]])
         for Tasks in tarefas_ordenadas:
-            print(f"\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}")
-        input("")
+            print(f"\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}")
+        input("\nPrecione qualquer tecla para continuar...")
         os.system('cls')
 
 def AtualizarStatus(): #função para editar alguma tarefa
@@ -90,16 +97,21 @@ def AtualizarStatus(): #função para editar alguma tarefa
 
         print('Qual tarefa você deseja atualizar?')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
-        for i, Tasks in enumerate(tarefas_ordenadas):
-            print(f'\nId: {i + 1}\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}') #Atribui uma adição de 1 ao ID para começar de 1 adiante.
+        for Tasks in tarefas_ordenadas:
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}') 
             
             #adicionei ao For o enumerate pra ele atribuir um ID numérico as tarefas (provisóriamente, a ideia é ele ja ser declarado na criação sem precisar diretamente da interação do usuário igual o status que por padrão vem como pendente).
         try:
-            indice = int(input(': ')) - 1   #Validação do índice + a subtração de 1 para se igualar ao ID da tarefa.
-            Tasks = ToDo[indice]
+            id_digitado = int(input(': '))   
+            Tasks = next((t for t in ToDo if t["ID"] == id_digitado), None) # Procura a tarefa com esse ID
+            if Tasks is None:
+                print('\033[31m \nÍndice desconhecido, tente novamente! \033[0m')
+                time.sleep(1.7)
+                os.system('cls')
+                return
             os.system('cls')
         except (ValueError, IndexError):
-            print('\033[31m \nÍndice desconhecido, tente novamente! \033[0m')
+            print('\033[31m \nÍndice desconhecido, Utilize apenas! \033[0m')
             time.sleep(1.7)
             os.system('cls')
             return
@@ -134,7 +146,7 @@ def AtualizarStatus(): #função para editar alguma tarefa
                     return #Precisa coisar pra ele voltar pra informar de novo a prioridade
 
             case 2:
-                novo_status = input('Informe o status da tarefa (pendente, fazendo ou concluído): ').lower()
+                novo_status = input('Informe o status da tarefa (pendente ou fazendo): ').lower()
                 if novo_status in status_validos:
                     Tasks['status'] = novo_status
                     print('\033[32m Status alterado com sucesso! \033[0m')
@@ -153,7 +165,92 @@ def AtualizarStatus(): #função para editar alguma tarefa
                 time.sleep(2.1)
                 os.system('cls')
         
-            
+def ConcluirTask():
+    if not ToDo:
+        print('\033[31m \nNão há nenhuma tarefa registrada para concluir! \033[0m')
+        time.sleep(2.1)
+        os.system('cls')
+        return
+    else:
+        for i in range(21):
+                bar = '█' * i + '░' * (20 - i)
+                print(f'\rCarregando: |{bar}| {i*5}%', end='') #apenas estética, pra criar efeito de carregamento.
+                time.sleep(0.03)
+                os.system('cls')
+
+        #1° parte da função
+
+        print('Qual tarefa você deseja concluir?')
+        tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
+        for Tasks in tarefas_ordenadas:
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}')
+
+        try:
+            id_digitado = int(input(': '))   
+            Tasks = next((t for t in ToDo if t["ID"] == id_digitado), None) # Procura a tarefa com esse ID
+            if Tasks is None:
+                print('\033[31m \nÍndice desconhecido, tente novamente! \033[0m')
+                time.sleep(1.7)
+                os.system('cls')
+                return
+            os.system('cls')
+        except (ValueError, IndexError):
+            print('\033[31m \nÍndice desconhecido, Utilize apenas! \033[0m')
+            time.sleep(1.7)
+            os.system('cls')
+            return
+
+        novo_status = "concluído"
+        Tasks['status'] = novo_status
+        Tasks["DataConclusao"] = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+        print('\033[32m Tarefa concluída com sucesso! \033[0m')
+        Tasks_con.append(Tasks)
+        ToDo.remove(Tasks)
+        time.sleep(1.7)
+        os.system('cls')
+
+def ExcluirTask():
+    if not ToDo:
+        print('\033[31m \nNão há nenhuma tarefa registrada para excluir! \033[0m')
+        time.sleep(2.1)
+        os.system('cls')
+        return
+    else:
+        for i in range(21):
+                bar = '█' * i + '░' * (20 - i)
+                print(f'\rCarregando: |{bar}| {i*5}%', end='') #apenas estética, pra criar efeito de carregamento.
+                time.sleep(0.03)
+                os.system('cls')
+
+        #1° parte da função
+
+        print('Qual tarefa você deseja excluir?')
+        tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
+        for Tasks in tarefas_ordenadas:
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}')
+
+        try:
+            id_digitado = int(input(': '))   
+            Tasks = next((t for t in ToDo if t["ID"] == id_digitado), None) # Procura a tarefa com esse ID
+            if Tasks is None:
+                print('\033[31m \nÍndice desconhecido, tente novamente! \033[0m')
+                time.sleep(1.7)
+                os.system('cls')
+                return
+            os.system('cls')
+        except (ValueError, IndexError):
+            print('\033[31m \nÍndice desconhecido, Utilize apenas! \033[0m')
+            time.sleep(1.7)
+            os.system('cls')
+            return
+
+        novo_status = "excluída"
+        Tasks['status'] = novo_status
+        print('\033[32m Tarefa excluída com sucesso! \033[0m')
+        Tasks_del.append(Tasks)
+        ToDo.remove(Tasks)
+        time.sleep(1.7)
+        os.system('cls')
 
 
 ###############################################   Menu   ######################################################
@@ -174,7 +271,9 @@ while True:
     print('  ║\033[35m                > 1 - Criar tarefa                   \033[0m           ║  ')
     print('  ║\033[35m                > 2 - Ver lista de tarefas           \033[0m           ║  ')
     print('  ║\033[35m                > 3 - Atualizar tarefas              \033[0m           ║  ')
-    print('  ║\033[35m                > 4 - Sair                           \033[0m           ║  ')
+    print('  ║\033[35m                > 4 - Concluir tarefa                \033[0m           ║  ')
+    print('  ║\033[35m                > 5 - Excluir tarefa                 \033[0m           ║  ')
+    print('  ║\033[35m                > 6 - Sair                           \033[0m           ║  ')
     print('  ║                                                                ║  ')
     print('  ╚════════════════════════════════════════════════════════════════╝  ')
 
@@ -199,6 +298,12 @@ while True:
             AtualizarStatus()
 
         case 4:
+            ConcluirTask()
+
+        case 5:
+            ExcluirTask()
+
+        case 6:
             break
 
         case _:
