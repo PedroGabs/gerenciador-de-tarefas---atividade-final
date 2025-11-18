@@ -127,5 +127,5 @@ Desenvolvido com foco em aprendizado, organização e boas práticas de programa
 <img 
     src="https://miro.medium.com/v2/resize:fit:960/0*9EPJGQNhpiAuHoIu.gif"
     alt="Tarefas"
-    width="140px"
+    width="150px"
 />
