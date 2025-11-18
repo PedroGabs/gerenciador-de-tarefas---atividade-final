@@ -1,7 +1,7 @@
 import os
 import time
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #id global
 id_tarefa = 1
@@ -246,12 +246,33 @@ def ExcluirTask():
 
         novo_status = "excluída"
         Tasks['status'] = novo_status
+        Tasks["DataDel"] = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         print('\033[32m Tarefa excluída com sucesso! \033[0m')
         Tasks_del.append(Tasks)
         ToDo.remove(Tasks)
         time.sleep(1.7)
         os.system('cls')
 
+def gerar_relatorio_txt(): #função json pra transformar em arquivo txt.
+    with open("relatorio_tarefas.txt", "w", encoding="utf-8") as rel:
+        rel.write("╔════════ RELATÓRIO DE TAREFAS ════════╗\n\n")
+
+        rel.write("╠══════════ TAREFAS ATIVAS: ═══════════╣\n")
+        for t in ToDo:
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}")
+
+        rel.write("\n╠════════ TAREFAS CONCLUÍDAS: ═══════╣\n")
+        for t in Tasks_con:
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de conclusão: {t['DataConclusao']}")
+
+        rel.write("\n╠════════ TAREFAS EXCLUÍDAS: ════════╣\n")
+        for t in Tasks_del:
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de exclusão: {t['DataDel']}")
+
+    os.system('cls')
+    print("\033[32m Relatório gerado: relatorio_tarefas.txt \033[0m")
+    time.sleep(1.7)
+    os.system('cls')
 
 ###############################################   Menu   ######################################################
 
@@ -273,7 +294,8 @@ while True:
     print('  ║\033[35m                > 3 - Atualizar tarefas              \033[0m           ║  ')
     print('  ║\033[35m                > 4 - Concluir tarefa                \033[0m           ║  ')
     print('  ║\033[35m                > 5 - Excluir tarefa                 \033[0m           ║  ')
-    print('  ║\033[35m                > 6 - Sair                           \033[0m           ║  ')
+    print('  ║\033[35m                > 6 - Gerar relatório em txt         \033[0m           ║  ')
+    print('  ║\033[35m                > 7 - Sair                           \033[0m           ║  ')
     print('  ║                                                                ║  ')
     print('  ╚════════════════════════════════════════════════════════════════╝  ')
 
@@ -304,6 +326,9 @@ while True:
             ExcluirTask()
 
         case 6:
+            gerar_relatorio_txt()
+
+        case 7:
             break
 
         case _:
