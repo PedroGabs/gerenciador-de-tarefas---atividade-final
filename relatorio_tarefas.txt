@@ -1,0 +1,18 @@
+╔════════ RELATÓRIO DE TAREFAS ════════╗
+
+╠══════════ TAREFAS ATIVAS: ═══════════╣
+
+╠════════ TAREFAS CONCLUÍDAS: ═════════╣
+
+Id: 1
+Título: Realizar a atividade final da matéria de sexta
+descrição: Desenvolver um sistema de tarefas para uma empresa fictícia seguindo requisitos solicitados em um documento.
+prioridade: alta
+status: concluído
+Origem: chamado do sistema
+Data de criação: 17:12:38 18/11/2025
+Data de conclusão: 17:12:48 18/11/2025
+
+╠════════ TAREFAS EXCLUÍDAS: ══════════╣
+
+╚══════════════════════════════════════╝

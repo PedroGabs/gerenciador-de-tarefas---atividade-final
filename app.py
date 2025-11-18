@@ -1,7 +1,6 @@
 import os
 import time
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 #id global
 id_tarefa = 1
@@ -47,7 +46,7 @@ def criarAtividade():
                 print('\033[31m Prioridade inválida. Tente novamente! \033[0m ')
                 time.sleep(2.1)
                 os.system('cls')
-                return #Precisa coisar pra ele voltar pra informar de novo a prioridade 
+                return 
         status = "pendente"
         while True:
             origemTar = input('Informe a origem da tarefa (Email, Telefone ou Chamado do sistema): ').lower()
@@ -57,7 +56,7 @@ def criarAtividade():
                 print('\033[31m Origem desconhecida. Tente novamente! \033[0m')
                 time.sleep(2.1)
                 os.system('cls')
-                return #Mesma fita que a prioridade
+                return
             
         DataCreation = datetime.now().strftime("%H:%M:%S %d/%m/%Y") #para pegar o horario
         addAtividade(titulo, desc, prioridade, status, origemTar, DataCreation)
@@ -76,7 +75,9 @@ def MostrarTasks(): #função pra imprimir as informações da lista na tela do 
                 os.system('cls')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]])
         for Tasks in tarefas_ordenadas:
-            print(f"\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}")
+            print('╔═════════════════════════════════════════════════════════╗')
+            print(f"\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\ndescrição: {Tasks['desc']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\nOrigem: {Tasks['origemTar']}\nData de criação: {Tasks['DataCreation']}\n")
+            print('╚═════════════════════════════════════════════════════════╝')
         input("\nPrecione qualquer tecla para continuar...")
         os.system('cls')
 
@@ -98,7 +99,9 @@ def AtualizarStatus(): #função para editar alguma tarefa
         print('Qual tarefa você deseja atualizar?')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
         for Tasks in tarefas_ordenadas:
-            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}') 
+            print('╔═════════════════════════════════════════════════════════╗')
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\n') 
+            print('╚═════════════════════════════════════════════════════════╝')
             
             #adicionei ao For o enumerate pra ele atribuir um ID numérico as tarefas (provisóriamente, a ideia é ele ja ser declarado na criação sem precisar diretamente da interação do usuário igual o status que por padrão vem como pendente).
         try:
@@ -118,9 +121,12 @@ def AtualizarStatus(): #função para editar alguma tarefa
         
         #2° parte da função
 
-        print('O que você deseja alterar?') #Menu de alterações
-        print('> 1 - Prioridade')
-        print('> 2 - Status')
+        print('╔═════════════════════════════════╗') #Menu de alterações
+        print('║  O que você deseja alterar?     ║') 
+        print('╠═════════════════════════════════╣') 
+        print('║        > 1 - Prioridade         ║') 
+        print('║        > 2 - Status             ║')
+        print('╚═════════════════════════════════╝')
         try:
             option = int(input(': ')) #parte pra validar o valor da opção
             os.system('cls')
@@ -143,7 +149,7 @@ def AtualizarStatus(): #função para editar alguma tarefa
                     print('\033[31m Prioridade inválida. Tente novamente! \033[0m ')
                     time.sleep(2.1)
                     os.system('cls')
-                    return #Precisa coisar pra ele voltar pra informar de novo a prioridade
+                    return 
 
             case 2:
                 novo_status = input('Informe o status da tarefa (pendente ou fazendo): ').lower()
@@ -157,7 +163,7 @@ def AtualizarStatus(): #função para editar alguma tarefa
                     print('\033[31m Status inválido. Tente novamente! \033[0m ')
                     time.sleep(2.1)
                     os.system('cls')
-                    return #Precisa coisar pra ele voltar pra informar de novo a prioridade
+                    return 
 
 
             case _:
@@ -183,7 +189,9 @@ def ConcluirTask():
         print('Qual tarefa você deseja concluir?')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
         for Tasks in tarefas_ordenadas:
-            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}')
+            print('╔═════════════════════════════════════════════════════════╗')
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\n')
+            print('╚═════════════════════════════════════════════════════════╝')
 
         try:
             id_digitado = int(input(': '))   
@@ -227,7 +235,9 @@ def ExcluirTask():
         print('Qual tarefa você deseja excluir?')
         tarefas_ordenadas = sorted(ToDo, key=lambda t: prioridades_validas[t["prioridade"]]) #método para colocar no topo as prioridades mais altas, seguindo uma sequência numerica declarada na lista de prioridades validas.
         for Tasks in tarefas_ordenadas:
-            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}')
+            print('╔═════════════════════════════════════════════════════════╗')
+            print(f'\nId: {Tasks['ID']}\nTítulo: {Tasks['titulo']}\nprioridade: {Tasks['prioridade']}\nstatus: {Tasks['status']}\n')
+            print('╚═════════════════════════════════════════════════════════╝')
 
         try:
             id_digitado = int(input(': '))   
@@ -253,21 +263,22 @@ def ExcluirTask():
         time.sleep(1.7)
         os.system('cls')
 
-def gerar_relatorio_txt(): #função json pra transformar em arquivo txt.
+def gerar_relatorio_txt(): #função pra transformar em arquivo txt.
     with open("relatorio_tarefas.txt", "w", encoding="utf-8") as rel:
         rel.write("╔════════ RELATÓRIO DE TAREFAS ════════╗\n\n")
 
         rel.write("╠══════════ TAREFAS ATIVAS: ═══════════╣\n")
         for t in ToDo:
-            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}")
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\n")
 
-        rel.write("\n╠════════ TAREFAS CONCLUÍDAS: ═══════╣\n")
+        rel.write("\n╠════════ TAREFAS CONCLUÍDAS: ═════════╣\n")
         for t in Tasks_con:
-            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de conclusão: {t['DataConclusao']}")
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de conclusão: {t['DataConclusao']}\n")
 
-        rel.write("\n╠════════ TAREFAS EXCLUÍDAS: ════════╣\n")
+        rel.write("\n╠════════ TAREFAS EXCLUÍDAS: ══════════╣\n")
         for t in Tasks_del:
-            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de exclusão: {t['DataDel']}")
+            rel.write(f"\nId: {t['ID']}\nTítulo: {t['titulo']}\ndescrição: {t['desc']}\nprioridade: {t['prioridade']}\nstatus: {t['status']}\nOrigem: {t['origemTar']}\nData de criação: {t['DataCreation']}\nData de exclusão: {t['DataDel']}\n")
+        rel.write("\n╚══════════════════════════════════════╝")
 
     os.system('cls')
     print("\033[32m Relatório gerado: relatorio_tarefas.txt \033[0m")
@@ -275,8 +286,6 @@ def gerar_relatorio_txt(): #função json pra transformar em arquivo txt.
     os.system('cls')
 
 ###############################################   Menu   ######################################################
-
-#\033[35m \033[0m
 
 while True:
     print('                                                              ')
@@ -335,7 +344,3 @@ while True:
             print('\033[31m Opção inválida. Tente novamente! \033[0m \n')
             time.sleep(1.7)
             os.system('cls')
-
-# caracteres do menu!
-#  \033[31m \033[0m
-# ╔╗═╚╝╠╣╦╬║╩
